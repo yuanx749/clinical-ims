@@ -46,6 +46,15 @@ The sample data command creates a clinician account:
 
 Open `http://127.0.0.1:8000` and sign in.
 
+## PostgreSQL
+
+SQLite is used by default. To use PostgreSQL, install the project dependencies and set `DATABASE_URL`:
+
+```bash
+DATABASE_URL=postgresql://clinical_ims:password@localhost:5432/clinical_ims
+uv run python manage.py migrate
+```
+
 ## Testing
 
 ```bash
