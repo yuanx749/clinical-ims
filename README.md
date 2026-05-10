@@ -61,6 +61,13 @@ uv run python manage.py migrate
 uv run python manage.py test
 ```
 
+End-to-end checks use Playwright:
+
+```bash
+uv run --group e2e python -m playwright install --with-deps chromium
+uv run --group e2e python tests/e2e_smoke.py
+```
+
 Manual checks:
 
 - Create, edit, search, and delete patients.
