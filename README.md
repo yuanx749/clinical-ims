@@ -10,6 +10,8 @@ A Django application for managing clinical patients, imaging records, and simple
 - D3 for interactive analytics
 - uv for dependency and virtual environment management
 
+Bootstrap and D3 are loaded from CDN links in the templates; they are not vendored in this repository.
+
 ## Features
 
 - Patient and scan pages require login.
