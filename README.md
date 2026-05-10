@@ -50,6 +50,8 @@ Open `http://127.0.0.1:8000` and sign in.
 
 SQLite is used by default. To use PostgreSQL, install the project dependencies and set `DATABASE_URL`:
 
+Create the PostgreSQL database and user first, then run migrations with the same `DATABASE_URL`.
+
 ```bash
 DATABASE_URL=postgresql://clinical_ims:password@localhost:5432/clinical_ims
 uv run python manage.py migrate
@@ -67,6 +69,8 @@ End-to-end checks use Playwright:
 uv run --group e2e python -m playwright install --with-deps chromium
 uv run --group e2e python tests/e2e_smoke.py
 ```
+
+GitHub Actions runs the Django test suite against SQLite and PostgreSQL, plus the Playwright smoke test.
 
 Manual checks:
 
