@@ -13,18 +13,28 @@ from records.models import ClinicalScan, Patient
 class Command(BaseCommand):
     help = "Creates a sample clinician account and generated clinical records."
 
-    def handle(self, *args, **options):
-        if Patient.objects.exists():
-            raise CommandError("Patients already exist. This command does not modify existing records.")
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--reset",
+            action="store_true",
+            help="Delete existing patient and scan records before creating sample data.",
+        )
 
-        clinician = self.create_sample_clinician()
+    def handle(self, *args, **options):
+        reset = options["reset"]
+        if Patient.objects.exists():
+            if not reset:
+                raise CommandError("Patients already exist. Use --reset to replace the sample records.")
+            Patient.objects.all().delete()
+
+        clinician = self.create_sample_clinician(reset_password=reset)
         patients = self.create_patients(clinician)
         scans = self.create_scans(patients, clinician)
 
         self.stdout.write(self.style.SUCCESS(f"Created {len(patients)} patients and {len(scans)} scans."))
         self.stdout.write("Sample login: docy / V7qN4pX9rL2m")
 
-    def create_sample_clinician(self):
+    def create_sample_clinician(self, reset_password=False):
         user_model = get_user_model()
         clinician, created = user_model.objects.get_or_create(
             username="docy",
@@ -33,8 +43,10 @@ class Command(BaseCommand):
                 "is_staff": True,
             },
         )
-        if created:
+        if created or reset_password:
             clinician.set_password("V7qN4pX9rL2m")
+            clinician.email = "docy@example.test"
+            clinician.is_staff = True
             clinician.save()
         return clinician
 

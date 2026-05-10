@@ -1,11 +1,13 @@
 from datetime import date
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
@@ -196,3 +198,22 @@ class RecordsTestCase(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("A9kT4mQ2vR7p"))
         self.assertEqual(self.client.get(reverse("dashboard")).status_code, 200)
+
+    def test_sample_data_loader_requires_reset_for_existing_records(self):
+        with self.assertRaises(CommandError):
+            call_command("load_sample_data", stdout=StringIO())
+
+    def test_sample_data_loader_reset_replaces_records_and_images(self):
+        scan = self.create_scan()
+        image_path = Path(scan.image.path)
+        self.assertTrue(image_path.exists())
+        self.user.set_password("Changed9Password")
+        self.user.save()
+
+        call_command("load_sample_data", "--reset", stdout=StringIO())
+
+        self.assertFalse(image_path.exists())
+        self.assertEqual(Patient.objects.count(), 12)
+        self.assertEqual(ClinicalScan.objects.count(), 24)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("V7qN4pX9rL2m"))

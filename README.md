@@ -33,6 +33,12 @@ uv run python manage.py load_sample_data
 uv run python manage.py runserver
 ```
 
+To replace existing sample records:
+
+```bash
+uv run python manage.py load_sample_data --reset
+```
+
 The sample data command creates a clinician account:
 
 - Username: `docy`
