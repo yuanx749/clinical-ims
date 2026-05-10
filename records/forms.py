@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
 
 from records.models import ClinicalScan, Patient
 
@@ -41,6 +42,12 @@ class ClinicalScanForm(forms.ModelForm):
             "performed_at": DateInput(),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        apply_bootstrap_classes(self.fields)
+
+
+class BootstrapPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         apply_bootstrap_classes(self.fields)

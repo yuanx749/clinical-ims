@@ -57,6 +57,29 @@ def patient_list(request):
 
 
 @login_required
+def scan_list(request):
+    search = request.GET.get("q", "").strip()
+    modality = request.GET.get("modality", "").strip()
+    scans = ClinicalScan.objects.select_related("patient", "clinician")
+    if search:
+        scans = scans.filter(
+            Q(patient__first_name__icontains=search)
+            | Q(patient__last_name__icontains=search)
+            | Q(reason__icontains=search)
+            | Q(diagnosis__icontains=search)
+        )
+    if modality:
+        scans = scans.filter(modality=modality)
+    context = {
+        "scans": scans,
+        "search": search,
+        "modality": modality,
+        "modality_choices": ClinicalScan.Modality.choices,
+    }
+    return render(request, "records/scan_list.html", context)
+
+
+@login_required
 def patient_detail(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
     return render(request, "records/patient_detail.html", {"patient": patient})
@@ -97,8 +120,6 @@ def patient_delete(request, patient_id):
         raise PermissionDenied
     patient = get_object_or_404(Patient, pk=patient_id)
     if request.method == "POST":
-        for scan in patient.scans.all():
-            scan.image.delete(save=False)
         patient.delete()
         messages.success(request, "Patient deleted.")
         return redirect("patient_list")
@@ -156,7 +177,6 @@ def scan_delete(request, scan_id):
         raise PermissionDenied
     patient_id = scan.patient_id
     if request.method == "POST":
-        scan.image.delete(save=False)
         scan.delete()
         messages.success(request, "Scan deleted.")
         return redirect("patient_detail", patient_id=patient_id)

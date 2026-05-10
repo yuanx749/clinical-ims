@@ -5,6 +5,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 
 def validate_past_date(value):
@@ -122,3 +124,9 @@ class ClinicalScan(models.Model):
     def clean(self):
         if self.patient_id and self.performed_at < self.patient.birth_date:
             raise ValidationError({"performed_at": "Scan date cannot be before patient birth date."})
+
+
+@receiver(post_delete, sender=ClinicalScan)
+def delete_scan_image(sender, instance, **kwargs):
+    if instance.image:
+        instance.image.delete(save=False)

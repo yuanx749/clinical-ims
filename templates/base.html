@@ -20,12 +20,16 @@
             <ul class="navbar-nav me-auto">
               <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
               <li class="nav-item"><a class="nav-link" href="{% url 'patient_list' %}">Patients</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'scan_list' %}">Scans</a></li>
               <li class="nav-item"><a class="nav-link" href="{% url 'analytics' %}">Analytics</a></li>
             </ul>
-            <form method="post" action="{% url 'logout' %}" class="ms-lg-auto">
+            <div class="d-flex gap-2 ms-lg-auto">
+              <a href="{% url 'password_change' %}" class="btn btn-outline-secondary btn-sm">Change password</a>
+              <form method="post" action="{% url 'logout' %}">
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
-            </form>
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+              </form>
+            </div>
           {% endif %}
         </div>
       </div>

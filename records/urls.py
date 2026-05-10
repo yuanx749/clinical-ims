@@ -12,6 +12,7 @@ urlpatterns = [
     path("patients/<int:patient_id>/edit/", views.patient_update, name="patient_update"),
     path("patients/<int:patient_id>/delete/", views.patient_delete, name="patient_delete"),
     path("patients/<int:patient_id>/scans/add/", views.scan_create, name="scan_create"),
+    path("scans/", views.scan_list, name="scan_list"),
     path("scans/<int:scan_id>/", views.scan_detail, name="scan_detail"),
     path("scans/<int:scan_id>/edit/", views.scan_update, name="scan_update"),
     path("scans/<int:scan_id>/delete/", views.scan_delete, name="scan_delete"),
