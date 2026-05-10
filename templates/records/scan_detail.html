@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="d-flex align-items-start justify-content-between mb-3">
+    <div>
+      <h1 class="h3 mb-1">{{ scan.get_modality_display }} scan</h1>
+      <p class="text-secondary mb-0">{{ scan.patient }} - {{ scan.performed_at }}</p>
+    </div>
+    {% if scan.clinician == user %}
+      <div class="d-flex gap-2">
+        <a href="{% url 'scan_update' scan.id %}" class="btn btn-outline-primary">Edit</a>
+        <a href="{% url 'scan_delete' scan.id %}" class="btn btn-outline-danger">Delete</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card card-body">
+        <img src="{{ scan.image.url }}" alt="Clinical scan image" class="img-fluid scan-image">
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card card-body">
+        <h2 class="h5">Scan details</h2>
+        <dl class="mb-0">
+          <dt>Modality</dt>
+          <dd>{{ scan.get_modality_display }}</dd>
+          <dt>Reason</dt>
+          <dd>{{ scan.reason }}</dd>
+          <dt>Diagnosis</dt>
+          <dd>{{ scan.diagnosis }}</dd>
+          <dt>Clinician</dt>
+          <dd>{{ scan.clinician.username }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <a href="{% url 'patient_detail' scan.patient.id %}" class="btn btn-link px-0 mt-3">Back to patient</a>
+{% endblock %}

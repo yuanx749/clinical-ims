@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <h1 class="h3 mb-1">Patients</h1>
+      <p class="text-secondary mb-0">Search and manage clinical patient records</p>
+    </div>
+    <a href="{% url 'patient_create' %}" class="btn btn-primary">Add patient</a>
+  </div>
+
+  <form method="get" class="row g-2 mb-3">
+    <div class="col-md-5">
+      <input type="search" name="q" value="{{ search }}" class="form-control" placeholder="Search by patient name">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-outline-primary">Search</button>
+    </div>
+  </form>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Sex</th>
+            <th>Birth date</th>
+            <th>Age</th>
+            <th>Risk factors</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for patient in patients %}
+            <tr>
+              <td><a href="{% url 'patient_detail' patient.id %}">{{ patient }}</a></td>
+              <td>{{ patient.get_sex_display }}</td>
+              <td>{{ patient.birth_date }}</td>
+              <td>{{ patient.age }}</td>
+              <td>
+                {% if patient.smoker %}<span class="badge text-bg-secondary">Smoker</span>{% endif %}
+                {% if patient.diabetes %}<span class="badge text-bg-secondary">Diabetes</span>{% endif %}
+                {% if patient.chemotherapy %}<span class="badge text-bg-secondary">Chemotherapy</span>{% endif %}
+              </td>
+              <td class="text-end"><a href="{% url 'patient_detail' patient.id %}" class="btn btn-sm btn-outline-secondary">View</a></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="text-center text-secondary py-4">No patients found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
